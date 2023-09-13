@@ -1,6 +1,11 @@
 package cmd
 
-import "server/db"
+import (
+	"server/controllers"
+	"server/db"
+
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
 	// _, err := db.NewDatabase()
@@ -9,4 +14,7 @@ func main() {
 	// 	log.Fatalf("Couldnt initialize database connection : %s", err)
 	// }
 	db.NewDatabase()
+	r := gin.Default()
+	r.POST("/signup", controllers.Signup)
+	r.Run()
 }
