@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"server/db"
 	"server/models"
+
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gin-gonic/gin"
@@ -34,7 +35,7 @@ func SignUp(c *gin.Context) {
 
 	// save to database
 
-	userData := models.User{Email: body.Email, password: string(hash)}
+	userData := models.User{Email: body.Email, Password: string(hash)}
 	result := db.DB.Create(&userData)
 
 	if result != nil {
