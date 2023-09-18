@@ -15,6 +15,11 @@ func main() {
 	// }
 	db.NewDatabase()
 	r := gin.Default()
-	r.POST("/signup", controllers.Signup)
+	r.POST("/signup", controllers.SignUp)
+	r.POST("/login",controllers.Login)
+	r.POST("/course/create",controllers.CreateCourse)
+	r.GET("/courses",controllers.GetAllCourses)
+	r.GET("/course/:id",controllers.GetCourse)
+
 	r.Run()
 }
