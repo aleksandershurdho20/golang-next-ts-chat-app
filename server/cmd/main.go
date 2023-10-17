@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	// _, err := db.NewDatabase()
+	// _, err := db.NewDataase()
 
 	// if err != nil {
 	// 	log.Fatalf("Couldnt initialize database connection : %s", err)
@@ -20,6 +20,9 @@ func main() {
 	r.POST("/course/create",controllers.CreateCourse)
 	r.GET("/courses",controllers.GetAllCourses)
 	r.GET("/course/:id",controllers.GetCourse)
+	// r.PUT("/course/:id",controllers.UpdateCourse)
+	r.DELETE("/course/:id",controllers.DeleteCourse)
+	r.GET("/courses/:page",controllers.GetCoursesByPage)
 
 	r.Run()
 }
