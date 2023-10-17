@@ -25,7 +25,7 @@ type Lesson struct {
 // }
 
 func CreateCourse(c *gin.Context) {
-	var course *models.Courses
+	var course *models.Course
 	c.Bind(&course)
 	result := db.DB.Create(&course)
 
@@ -42,7 +42,7 @@ func CreateCourse(c *gin.Context) {
 }
 
 func GetAllCourses(c *gin.Context) {
-	var courses []models.Courses
+	var courses []models.Course
 	result := db.DB.Find(&courses)
 
 	if result.Error != nil {
@@ -55,7 +55,7 @@ func GetAllCourses(c *gin.Context) {
 }
 
 func GetCourse(c *gin.Context) {
-	var course models.Courses
+	var course models.Course
 	id := c.Param("id")
 	result := db.DB.First(&course, id)
 
@@ -103,7 +103,7 @@ func GetCourse(c *gin.Context) {
 // }
 
 func DeleteCourse(c *gin.Context) {
-	var course models.Courses
+	var course models.Course
 	id := c.Param("id")
 
 	result := db.DB.Delete(&course, id)
@@ -127,7 +127,7 @@ func GetCoursesByPage(c *gin.Context) {
 
 	}
 	offset := (page - 1) * 10 // pageNUmber is active page, -1, where 10 is total of pages
-	var courses []models.Courses
+	var courses []models.Course
 	result := db.DB.Limit(10).Offset(offset).Find(&courses)
 
 	if result.Error != nil {
