@@ -23,6 +23,10 @@ func main() {
 	// r.PUT("/course/:id",controllers.UpdateCourse)
 	r.DELETE("/course/:id",controllers.DeleteCourse)
 	r.GET("/courses/:page",controllers.GetCoursesByPage)
-
+	
+	r.POST("/lesson/create",controllers.CreateLesson)
+	r.GET("/lessons",controllers.GetLessons)
+	r.POST("/lessons/search",controllers.SearchLessons)
+	r.POST("/lessons/sort",controllers.OrderLessons)
 	r.Run()
 }
