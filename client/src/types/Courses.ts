@@ -10,3 +10,14 @@ export type CourseFormProps ={
     handleFormChange:(e:React.ChangeEvent<HTMLInputElement>) => void
 
 }
+
+export type ListCourses = {
+    ID: number,
+    CreatedAt: string,
+    UpdatedAt: string,
+    DeletedAt: string | null,
+    title: string,
+    desc: string,
+    author_id: number,
+    price: number
+}

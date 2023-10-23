@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -68,16 +67,18 @@ func GetAllCourses(c * gin.Context){
 func GetCourse(c * gin.Context){
 	var course models.Courses
 	id:=c.Param("id")
-	result:= db.DB.First(&course,id)
+	result:= db.DB.Preload("Lessons").First(&course, id)
 
-	if result.RowsAffected == 0 {
-		c.JSON(404,gin.H{
-			"message":"Course not found!",
-		})
-		fmt.Println(result.RowsAffected)
 
-		return
-	}
+
+	// if result.RowsAffected == 0 {
+	// 	c.JSON(404,gin.H{
+	// 		"message":"Course not found!",
+	// 	})
+	// 	fmt.Println(result.RowsAffected)
+
+	// 	return
+	// }
 
 	if result.Error != nil {
 		c.JSON(500,gin.H{"message":"Server Error"})

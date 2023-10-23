@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CreateCourse from './pages/CreateCourse';
+import CreateCourse from './pages/Courses/CreateCourse';
+import RouteWrapper from './routes/Routes';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
-      <CreateCourse/>
+      {/* <CreateCourse/> */}
+      <RouteWrapper/>
     </>
   )
 }

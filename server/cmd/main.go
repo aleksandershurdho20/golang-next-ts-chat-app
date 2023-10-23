@@ -4,6 +4,8 @@ import (
 	"server/controllers"
 	"server/db"
 
+	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +17,11 @@ func main() {
 	// }
 	db.NewDatabase()
 	r := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	r.Use(cors.New(config))
+
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login",controllers.Login)
 	r.POST("/course/create",controllers.CreateCourse)
@@ -28,5 +35,8 @@ func main() {
 	r.GET("/lessons",controllers.GetLessons)
 	r.POST("/lessons/search",controllers.SearchLessons)
 	r.POST("/lessons/sort",controllers.OrderLessons)
+	r.POST("/reviews/create",controllers.CreateReview)
+	r.GET("/reviews/:course",controllers.GetReviews)
+
 	r.Run()
 }
