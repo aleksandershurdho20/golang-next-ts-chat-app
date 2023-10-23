@@ -65,7 +65,7 @@ func GetAllCourses(c *gin.Context) {
 }
 
 func GetCourse(c *gin.Context) {
-	var course models.Courses
+	var course *models.Courses
 	id := c.Param("id")
 	result := db.DB.Preload("Lessons").First(&course, id).Error
 
