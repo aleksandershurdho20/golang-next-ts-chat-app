@@ -37,6 +37,7 @@ func main() {
 	r.POST("/lessons/sort",controllers.OrderLessons)
 	r.POST("/reviews/create",controllers.CreateReview)
 	r.GET("/reviews/:course",controllers.GetReviews)
+	r.POST("/quiz",controllers.CreateQuiz)
 
 	r.Run()
 }

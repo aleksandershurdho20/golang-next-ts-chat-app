@@ -44,7 +44,7 @@ func CreateReview(c *gin.Context) {
 // }
 
 func GetReviews(c *gin.Context) {
-	var reviews models.Review
+	var reviews []models.Review
 	id := c.Param("course")
 	result := db.DB.Where("course_id = ?", id).Find(&reviews).Error
 

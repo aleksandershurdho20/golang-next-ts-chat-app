@@ -1,4 +1,4 @@
-package main
+package migrations
 
 import (
 	"server/db"
@@ -8,5 +8,5 @@ import (
 func main() {
 	db.NewDatabase()
 
-	db.DB.AutoMigrate(&models.User{},&models.Courses{},&models.Lesson{},&models.Review{})
+	db.DB.AutoMigrate(&models.User{},&models.Courses{},&models.Lesson{},&models.Review{},models.Quiz{})
 }

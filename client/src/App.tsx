@@ -1,18 +1,16 @@
-import { useState } from 'react'
-
-import './App.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import CreateCourse from './pages/Courses/CreateCourse';
-import RouteWrapper from './routes/Routes';
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import RouteWrapper from "./routes/Routes";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-
   return (
     <>
       {/* <CreateCourse/> */}
-      <RouteWrapper/>
+      <RouteWrapper />
+      <Toaster />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

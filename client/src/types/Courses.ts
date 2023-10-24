@@ -1,7 +1,8 @@
+import {Lesson} from './Lessons'
 export type Form =  {
-title:string,
-description:string,
-price:number
+    title:string,
+    description:string,
+    price:number
 }
 
 
@@ -20,4 +21,5 @@ export type ListCourses = {
     desc: string,
     author_id: number,
     price: number
+    lessons:Lesson[]
 }

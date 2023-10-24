@@ -1,18 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { ListCourses } from "../../types/Courses";
+import { Review } from "../../types/Reviews";
+
 import { get } from "../../utils/api";
 import { useParams } from "react-router-dom";
 import { Clock, BookOpen, Command } from "react-feather";
+import CourseReviews from "./CourseReviews";
+import Stepper from "../../components/Stepper/Index";
+import { CourseStepperData } from "../../utils/courses";
+import CourseLessons from "./CourseLessons";
 
 export default function ViewCourse() {
   const [course, setCourse] = useState<ListCourses | undefined>(undefined);
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  const [tab, setTab] = useState<string>("");
   const { id } = useParams();
   useEffect(() => {
+    if (!id) return undefined;
     get<{ data: ListCourses }>(`/course/${id}`).then((res) =>
       setCourse(res.data)
     );
+
+    get<{ data: Review[] }>(`/reviews/${id}`).then((res) =>
+      setReviews(res.data)
+    );
   }, [id]);
-  console.log(course);
+
+  const onTabChange = (tab: string) => setTab(tab);
+
+  const refreshReviewsList = () => {
+    get<{ data: Review[] }>(`/reviews/${id}`).then((res) =>
+      setReviews(res.data)
+    );
+  };
+
   return (
     <>
       <div className="wrapper" style={{ background: "#000" }}>
@@ -26,12 +48,27 @@ export default function ViewCourse() {
       <div className="container py-5 px-5">
         <div className="row">
           <div className="col-9">
-            <h2>Title</h2>
-            <div className="row">
+            <h2>{course?.title}</h2>
+            <div className="row mb-4">
               <div className="col-md-4">Instructor : Someone</div>
               <div className="col-md-4">Categories: SOmethign </div>
               <div className="col-md-4">Reviews : 4</div>
             </div>
+
+            <Stepper
+              tabOptions={CourseStepperData}
+              value={tab}
+              onTabClick={onTabChange}
+            />
+
+            {tab === "review" && (
+              <CourseReviews
+                courseID={parseInt(id as string) as number}
+                refreshReviewsList={refreshReviewsList}
+                reviews={reviews}
+              />
+            )}
+            {tab === "lessons" && <CourseLessons lessons={course?.lessons} />}
           </div>
           <div className="col-3">
             <h3>Course Features</h3>
@@ -50,7 +87,7 @@ export default function ViewCourse() {
                 <span className="ms-2">Lessons</span>
               </div>
 
-              <span>4</span>
+              <span>{course?.lessons.length}</span>
             </div>
             <div className="d-flex justify-content-between mt-4">
               <div>
