@@ -67,7 +67,7 @@ func GetAllCourses(c *gin.Context) {
 func GetCourse(c *gin.Context) {
 	var course *models.Courses
 	id := c.Param("id")
-	result := db.DB.Preload("Lessons").First(&course, id).Error
+	result := db.DB.Preload("Quizes.Questions.Answers").Preload("Lessons").First(&course, id).Error
 
 	if errors.Is(result, gorm.ErrRecordNotFound) {
 		c.JSON(404, gin.H{
@@ -81,30 +81,25 @@ func GetCourse(c *gin.Context) {
 	})
 }
 
-// func UpdateCourse(c*gin.Context){
-// 	var course models.Courses
-// 	id:= c.Param("id")
-// 	c.Bind(&Course)
-// 	updatedCourse := models.Courses{
-//         TITLE:       Course.TITLE,
-//         DESCRIPTION: Course.DESCRIPTION,
-//         AUTHOR_ID:   Course.AUTHOR_ID,
-//         PRICE:       Course.PRICE,
-//     }
-// 	result:= db.DB.Model(&course).Where("id = ?", id).Updates(&updatedCourse);
+func UpdateCourse(c*gin.Context){
+	var course models.Courses
+	id:= c.Param("id")
+	c.Bind(&course)
 
-// 	if result.Error != nil {
-// 		c.JSON(500,gin.H{
-// 			"message":"Server errror!",
-// 		})
-// 		return
-// 	}
+	result:= db.DB.Model(&course).Where("id = ?", id).Updates(&course);
 
-// 	c.JSON(200,gin.H{
-// 		"message":"Updated succesfully!",
-// 		"data":result,
-// 	})
-// }
+	if result.Error != nil {
+		c.JSON(500,gin.H{
+			"message":"Server errror!",
+		})
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"message":"Updated succesfully!",
+		"data":result,
+	})
+}
 
 func DeleteCourse(c *gin.Context) {
 	var course models.Courses

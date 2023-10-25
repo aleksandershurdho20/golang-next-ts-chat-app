@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ListCourses } from "../../types/Courses";
 import { Review } from "../../types/Reviews";
-
 import { get } from "../../utils/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Clock, BookOpen, Command } from "react-feather";
 import CourseReviews from "./CourseReviews";
 import Stepper from "../../components/Stepper/Index";
 import { CourseStepperData } from "../../utils/courses";
 import CourseLessons from "./CourseLessons";
+import { Lesson } from "../../types/Lessons";
+import CourseQuiz from "./CourseQuiz";
+import { Quiz } from "../../types/Quiz";
 
 export default function ViewCourse() {
   const [course, setCourse] = useState<ListCourses | undefined>(undefined);
@@ -16,6 +18,7 @@ export default function ViewCourse() {
 
   const [tab, setTab] = useState<string>("");
   const { id } = useParams();
+  const navigate = useNavigate();
   useEffect(() => {
     if (!id) return undefined;
     get<{ data: ListCourses }>(`/course/${id}`).then((res) =>
@@ -41,7 +44,13 @@ export default function ViewCourse() {
         <div className="container">
           <div className="hero py-5 px-5" style={{ height: 250 }}>
             <h2 className="text-white">All Courses</h2>
-            <span className="text-white">Breadcrumb</span>
+            <button
+              type="button"
+              className="btn btn-outline-dark"
+              onClick={() => navigate("/")}
+            >
+              <span className="text-white">Back To courses</span>
+            </button>
           </div>
         </div>
       </div>
@@ -68,7 +77,10 @@ export default function ViewCourse() {
                 reviews={reviews}
               />
             )}
-            {tab === "lessons" && <CourseLessons lessons={course?.lessons} />}
+            {tab === "lessons" && (
+              <CourseLessons lessons={course?.lessons as Lesson[]} />
+            )}
+            {tab === "quiz" && <CourseQuiz quizes={course?.quizes as Quiz[]} />}
           </div>
           <div className="col-3">
             <h3>Course Features</h3>
@@ -86,8 +98,7 @@ export default function ViewCourse() {
                 <BookOpen />
                 <span className="ms-2">Lessons</span>
               </div>
-
-              <span>{course?.lessons.length}</span>
+              <span>{course?.lessons?.length}</span>
             </div>
             <div className="d-flex justify-content-between mt-4">
               <div>
@@ -95,7 +106,7 @@ export default function ViewCourse() {
                 <span className="ms-2">Quizes</span>
               </div>
 
-              <span>4</span>
+              <span>{course?.quizes?.length}</span>
             </div>
             <div className="mt-4">
               <h3>You may like</h3>

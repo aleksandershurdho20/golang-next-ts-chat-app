@@ -8,5 +8,5 @@ import (
 func main() {
 	db.NewDatabase()
 
-	db.DB.AutoMigrate(&models.User{},&models.Courses{},&models.Lesson{},&models.Review{},models.Quiz{})
+	db.DB.AutoMigrate(&models.User{},&models.Courses{},&models.Lesson{},&models.Review{},models.Quiz{},&models.Question{}, &models.Answer{})
 }

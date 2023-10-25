@@ -6,6 +6,7 @@ type Quiz struct {
     gorm.Model
     Title string `json:"title"`
     Questions []Question `json:"questions"`
+    CourseId string `json:"course_id"`
 }
 
 type Question struct {
@@ -17,7 +18,11 @@ type Question struct {
 
 type Answer struct {
     gorm.Model
-    title     string `json:"title"`
+    Title string `json:"title"`
     IsCorrect bool `json:"is_correct"`
     QuestionID uint `json:"question_id"`
+}
+
+func (Quiz) TableName() string {
+    return "quizzes" // Specify the correct table name
 }

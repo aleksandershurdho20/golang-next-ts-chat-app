@@ -1,5 +1,7 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-modern-drawer/dist/index.css";
+
 import RouteWrapper from "./routes/Routes";
 import { Toaster } from "react-hot-toast";
 

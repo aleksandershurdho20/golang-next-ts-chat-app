@@ -11,4 +11,5 @@ type Courses struct {
 	AuthorId int64     `json:"author_id"`
 	Price    int64     `json:"price"`
 	Lessons  []*Lesson `json:"lessons" gorm:"foreignKey:CourseId"`
+	Quizes   []Quiz `json:"quizes" gorm:"foreignKey:CourseId"`
 }

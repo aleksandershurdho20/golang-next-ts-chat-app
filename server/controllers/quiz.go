@@ -17,3 +17,22 @@ func CreateQuiz(c *gin.Context){
 		}
 		c.JSON(201,gin.H{"result":"Quiz created succesfully!"})
 }
+
+func GetQuizByCourseId(c* gin.Context){
+	id:= c.Param("id")
+	var quiz models.Quiz
+
+	err := db.DB.Preload("Questions.Answers").Where("course_id = ?", id).Find(&quiz).Error
+	// err := db.DB.Find(&quiz).Error
+
+	if err != nil {
+		c.JSON(404,gin.H{"message": "No Quizzes found for this course id."})
+		return
+	}
+
+
+	c.JSON(200,gin.H{
+		"result":quiz,
+	})
+
+}

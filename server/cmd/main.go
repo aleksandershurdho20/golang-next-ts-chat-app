@@ -27,7 +27,7 @@ func main() {
 	r.POST("/course/create",controllers.CreateCourse)
 	r.GET("/courses",controllers.GetAllCourses)
 	r.GET("/course/:id",controllers.GetCourse)
-	// r.PUT("/course/:id",controllers.UpdateCourse)
+	r.PUT("/course/:id",controllers.UpdateCourse)
 	r.DELETE("/course/:id",controllers.DeleteCourse)
 	r.GET("/courses/:page",controllers.GetCoursesByPage)
 	
@@ -38,6 +38,6 @@ func main() {
 	r.POST("/reviews/create",controllers.CreateReview)
 	r.GET("/reviews/:course",controllers.GetReviews)
 	r.POST("/quiz",controllers.CreateQuiz)
-
+	r.GET("/quiz/:id",controllers.GetQuizByCourseId)
 	r.Run()
 }
