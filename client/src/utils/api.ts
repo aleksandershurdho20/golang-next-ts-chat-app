@@ -5,6 +5,7 @@ const BASE_URL :string = "http://localhost:8080/";
 
 export const api = axios.create({
     baseURL: BASE_URL,
+    withCredentials:true
     // withCredentials: true
 });
 

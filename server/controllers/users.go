@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"server/db"
 	"server/models"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -104,9 +106,77 @@ func Login(c *gin.Context) {
         return
     }
 
+    localEnviroment:= os.Getenv("ENVIROMENT")
+    httpOnlyCookie := !strings.Contains("localhost",localEnviroment)
+    fmt.Println(httpOnlyCookie,"httpOnlyCookie")
     c.SetSameSite(http.SameSiteLaxMode)
-    c.SetCookie("Auth", tokenString, 3600*24*30, "", "", false, true)
+    c.SetCookie("Auth", tokenString, 3600*24*30, "", "", false, httpOnlyCookie)
     c.JSON(http.StatusOK, gin.H{
         "data": tokenString,
+    })
+}
+
+
+// func GetAuthenticatedUser (c * gin.Context){
+//     cookie,_ := c.Cookie("Auth")
+    
+//     // token,loginErr :=jwt.ParseWithClaims(cookie,&jwt.StandardClaims{},func(token * jwt.Token)(interface{},error){
+//     //     return []byte(os.Getenv("TOKEN_SECRET")),nil
+//     // })
+    
+// 	token, loginErr := jwt.ParseWithClaims(cookie, &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+// 		return []byte(os.Getenv("TOKEN_SECRET")), nil
+// 	})
+//     if  loginErr != nil {
+//         c.JSON(403,gin.H{
+//             "message":"UnAuthorized!",
+//         })
+//         return
+//     }
+
+//     claims := token.Claims.(jwt.MapClaims)
+
+    
+//     var user models.User
+
+//     db.DB.Where("email = ?",claims["userid"]).First(&user)
+
+    
+
+//      c.JSON(200,gin.H{
+//         "result":user,
+//     })
+
+// }
+
+
+func GetAuthenticatedUser(c *gin.Context) {
+    cookie, _ := c.Cookie("Auth")
+
+    token, loginErr := jwt.ParseWithClaims(cookie, &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+        return []byte(os.Getenv("TOKEN_SECRET")), nil
+    })
+
+    if loginErr != nil {
+        c.JSON(403, gin.H{
+            "message": "UnAuthorized!",
+        })
+        return
+    }
+
+    claims, ok := token.Claims.(*jwt.MapClaims)
+    if !ok {
+        c.JSON(500, gin.H{
+            "message": "Failed to get claims from token",
+        })
+        return
+    }
+
+    var user models.User
+    db.DB.Where("email = ?", (*claims)["userid"]).First(&user)
+    // user.Password = ""
+
+    c.JSON(200, gin.H{
+        "result": user,
     })
 }
