@@ -23,9 +23,9 @@ const course = createSlice({
   reducers: {
     handleFormChange: (
       state,
-      action: PayloadAction<React.ChangeEvent<HTMLInputElement>>
+      action: PayloadAction<{name:string,value:string}>
     ) => {
-      const { name, value } = action.payload.target;
+      const { name, value } = action.payload;
       // state[name] = value;
       return {
         ...state,

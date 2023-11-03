@@ -1,23 +1,26 @@
 import React from "react";
 import { Trash } from "react-feather";
-
+import { useAppDispatch } from "../../hooks/redux";
+import { handleLessons, removeLessonFields } from "../../redux/slices/course";
 import type { Lesson } from "../../types/Lessons";
 import TextField from "../TextField/Index";
 type Props = {
   index: number;
   lesson: Lesson;
-  removeLessonFields: (index: number) => void;
-  handleLessonsChange: (
+};
+export default function CourseLessonForm({ index, lesson }: Props) {
+  const dispatch = useAppDispatch();
+
+  const handleRemoveLessonFields = (index: number) =>
+    dispatch(removeLessonFields(index));
+
+  const handleLessonsChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
-  ) => void;
-};
-export default function CourseLessonForm({
-  index,
-  lesson,
-  removeLessonFields,
-  handleLessonsChange,
-}: Props) {
+  ) => {
+    const { name, value } = e.target;
+    dispatch(handleLessons({ name, value, index }));
+  };
   return (
     <>
       <div className="row" key={index}>
@@ -58,7 +61,7 @@ export default function CourseLessonForm({
             <button
               className="btn btn-light rounded-circle btn-sm "
               style={{ width: 50, height: 50 }}
-              onClick={() => removeLessonFields(index)}
+              onClick={() => handleRemoveLessonFields(index)}
             >
               <Trash color="#ff7171" />
             </button>

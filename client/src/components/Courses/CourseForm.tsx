@@ -1,24 +1,27 @@
+import { Fragment } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import useStepper from "../../hooks/useStepper";
-import { CourseFormProps, Form } from "../../types/Courses";
+import {
+  CourseSelector,
+  addNewLessonFields,
+  handleFormChange,
+} from "../../redux/slices/course";
+import { CourseFormProps } from "../../types/Courses";
 import { CourseFormData } from "../../utils/courses";
 import Stepper from "../Stepper/Index";
 import TextField from "../TextField/Index";
 import CourseLessonForm from "./CourseLessonForm";
 import CourseQuizForm from "./CourseQuizForm";
-
-export default function CourseForm({
-  title,
-  description,
-  price,
-  lessons,
-  handleFormChange,
-  handleSubmit,
-  addLesson,
-  handleRemoveLessonFields,
-  handleLessonsChange,
-}: Form & CourseFormProps) {
+export default function CourseForm({ handleSubmit }: CourseFormProps) {
   const { tab, onTabChange } = useStepper("overview");
+  const courseData = useAppSelector(CourseSelector);
+  const dispatch = useAppDispatch();
 
+  const addLesson = () => dispatch(addNewLessonFields());
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    dispatch(handleFormChange({ name, value }));
+  };
   return (
     <div className="row mx-0">
       <div className="container">
@@ -41,8 +44,8 @@ export default function CourseForm({
                   label="Title"
                   id="title"
                   name="title"
-                  value={title}
-                  onChange={handleFormChange}
+                  value={courseData.title}
+                  onChange={handleChange}
                   placeholder="Title"
                 />
               </div>
@@ -54,8 +57,8 @@ export default function CourseForm({
                   id="description"
                   placeholder="Description"
                   name="description"
-                  value={description}
-                  onChange={handleFormChange}
+                  value={courseData.description}
+                  onChange={handleChange}
                 />
               </div>
               <div className="col-md-12">
@@ -67,8 +70,8 @@ export default function CourseForm({
                     id="price"
                     placeholder="Price"
                     name="price"
-                    value={price}
-                    onChange={handleFormChange}
+                    value={courseData.price}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
@@ -77,13 +80,10 @@ export default function CourseForm({
 
           {tab === "lessons" && (
             <>
-              {lessons.map((lesson, index) => (
-                <CourseLessonForm
-                  lesson={lesson}
-                  index={index}
-                  removeLessonFields={handleRemoveLessonFields}
-                  handleLessonsChange={handleLessonsChange}
-                />
+              {courseData?.lessons?.map((lesson, index) => (
+                <Fragment key={index}>
+                  <CourseLessonForm lesson={lesson} index={index} />
+                </Fragment>
               ))}
               <button onClick={addLesson} className="btn btn-primary w-25">
                 Add

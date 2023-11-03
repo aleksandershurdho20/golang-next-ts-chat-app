@@ -16,10 +16,7 @@ export type Form =  {
 
 export type CourseFormProps ={
     handleSubmit :() => void,
-    handleFormChange:(e:React.ChangeEvent<HTMLInputElement>) => void
-    addLesson:() => void
-    handleRemoveLessonFields:(index:number) => void
-    handleLessonsChange:(e:React.ChangeEvent<HTMLInputElement>,index:number) => void
+
 }
 
 export type ListCourses = {
