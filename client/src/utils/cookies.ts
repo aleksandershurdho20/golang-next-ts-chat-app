@@ -8,12 +8,16 @@ export function setCookie(name: string, val: string) {
     // Set it
     document.cookie = name+"="+value+"; expires="+date.toUTCString()+"; path=/";
 }
-export const getCookie = (cookieName: string) => {
-    const match = new RegExp(`${cookieName}=([^;]+);`).exec(document.cookie);
-    if (match) {
-      return match[1];
-    } else {
-      console.error(`Cookie with name "${cookieName}" not found. document.cookie: ${document.cookie}`);
-      return null; 
+export function getCookie(cookieName: string): string | null {
+    const name = cookieName + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(';');
+  
+    for (let i = 0; i < cookieArray.length; i++) {
+      const cookie = cookieArray[i].trim();
+      if (cookie.indexOf(name) === 0) {
+        return cookie.substring(name.length);
+      }
     }
-  };
+    return null; 
+  }

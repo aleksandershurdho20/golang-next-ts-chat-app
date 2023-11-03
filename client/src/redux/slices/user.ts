@@ -27,8 +27,8 @@ const initialState: InitalState = {
 export const getUser = createAsyncThunk(
     "users/getUser",
     async() => {
-       const res = await get<User>("user")
-       return res
+       const {result} = await get<{result:User}>("user")
+       return result
     }
   )
 
@@ -43,6 +43,12 @@ const user = createSlice({
         builder.addCase(getUser.fulfilled, (state, action: PayloadAction<User>) => {
             state.isLoading = false;
             state.user = action.payload;
+            state.isAuthenticated = true
+          }),
+          builder.addCase(getUser.rejected, (state) => {
+            state.isLoading = true;
+            state.user = undefined
+            state.isAuthenticated = false
           });
     },
     reducers:{}

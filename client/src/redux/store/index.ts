@@ -1,9 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit'
 import user from '../slices/user'
+import course from '../slices/course'
 
 export const store = configureStore({
     reducer:{
-        user
+        user,
+        course
     }
 })
 

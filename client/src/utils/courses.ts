@@ -21,3 +21,20 @@ export const CourseStepperData : CourseStepper[]= [
         value:"review"
     },
 ]
+
+
+export const CourseFormData : CourseStepper[]= [
+    {
+        title:"Overview",
+        value:"overview"
+    },
+    {
+        title:"Lessons",
+        value:"lessons"
+    },
+    {
+        title:"Quiz",
+        value:"quiz"
+    },
+   
+]

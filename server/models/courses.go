@@ -13,3 +13,8 @@ type Courses struct {
 	Lessons  []*Lesson `json:"lessons" gorm:"foreignKey:CourseId"`
 	Quizes   []Quiz `json:"quizes" gorm:"foreignKey:CourseId"`
 }
+
+
+func (Courses) TableName() string {
+    return "courses" // Specify the correct table name
+}

@@ -51,10 +51,10 @@ export default function CourseQuiz({ quizes }: Props) {
           <h3 className="text-muted">{quizData?.title || ""}</h3>
           <hr />
           <h2 className=" fw-bold">
-            {quizData?.questions[questionNumber]?.title}
+            {quizData?.questions && quizData?.questions[questionNumber]?.title}
           </h2>
           <div className="row">
-            {quizData?.questions[questionNumber]?.answers.map(
+            {quizData?.questions?.[questionNumber]?.answers?.map(
               (answer, index) => (
                 <div className="col" key={index}>
                   <div className="form-check">
@@ -62,11 +62,11 @@ export default function CourseQuiz({ quizes }: Props) {
                       className="form-check-input"
                       type="checkbox"
                       defaultValue=""
-                      id="flexCheckDefault"
+                      id={`flexCheckDefault-${index}`}
                     />
                     <label
                       className="form-check-label"
-                      htmlFor="flexCheckDefault"
+                      htmlFor={`flexCheckDefault-${index}`}
                     >
                       {answer.title}
                     </label>
@@ -76,7 +76,7 @@ export default function CourseQuiz({ quizes }: Props) {
             )}
           </div>
           <div className="quiz-actions d-flex mt-5">
-            {quizData?.questions.length == questionNumber ? (
+            {quizData?.questions?.length == questionNumber ? (
               <button>Finish</button>
             ) : (
               <>

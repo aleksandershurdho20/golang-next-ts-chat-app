@@ -1,0 +1,16 @@
+.btn .btn-gray{
+    background: rgb(231, 231, 231);
+    border-color: rgb(231, 231, 231);
+    color: black;
+    font-weight: 600;
+}
+
+.chip{
+    width: 158px;
+    max-width: 180px;
+    background: white;
+    border: 1px solid #dee2e6;
+    padding: 11px;
+    /* border-color: #DEE2E6; */
+    border-radius: 25px;
+}

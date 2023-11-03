@@ -25,31 +25,55 @@ type Lesson struct {
 // 	PRICE int
 // }
 
+// func CreateCourse(c *gin.Context) {
+// 	var course *models.Courses
+// 	c.Bind(&course)
+// 	// createdCourse := models.Courses{
+// 	//     TITLE:       Course.TITLE,
+// 	//     DESCRIPTION: Course.DESCRIPTION,
+// 	//     AUTHOR_ID:   Course.AUTHOR_ID,
+// 	//     PRICE:       Course.PRICE,
+// 	// 	Lessons:models.Lesson[]
+// 	// }
+
+// 	// createdCourse:=models.Course
+// 	result := db.DB.Create(&course)
+
+// 	if result.Error != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{
+// 			"message": "Server error!",
+// 		})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusCreated, gin.H{
+// 		"message": "Course Created",
+// 	})
+// }
+
 func CreateCourse(c *gin.Context) {
-	var course *models.Courses
-	c.Bind(&course)
-	// createdCourse := models.Courses{
-	//     TITLE:       Course.TITLE,
-	//     DESCRIPTION: Course.DESCRIPTION,
-	//     AUTHOR_ID:   Course.AUTHOR_ID,
-	//     PRICE:       Course.PRICE,
-	// 	Lessons:models.Lesson[]
-	// }
+    var course models.Courses
+    if err := c.ShouldBindJSON(&course); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "Invalid request data",
+        })
+        return
+    }
 
-	// createdCourse:=models.Course
-	result := db.DB.Create(&course)
+    result := db.DB.Create(&course)
 
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Server error!",
-		})
-		return
-	}
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "message": "Server error!",
+        })
+        return
+    }
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Course Created",
-	})
+    c.JSON(http.StatusOK, gin.H{
+        "message": "Course Created",
+    })
 }
+
 
 func GetAllCourses(c *gin.Context) {
 	var courses []models.Courses

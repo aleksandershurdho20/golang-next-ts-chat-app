@@ -2,13 +2,13 @@ type QuizAnswers ={
     title:string,
     is_correct:boolean
 }
-type QuizQuestions = {
+export type QuizQuestions = {
     title:string,
-    answers:QuizAnswers[]
+    answers?:QuizAnswers[]
 }
 
 export type Quiz = {
     title:string,
-    course_id:number
-    questions: QuizQuestions[]
+    course_id?:number
+    questions?: QuizQuestions[]
 }
