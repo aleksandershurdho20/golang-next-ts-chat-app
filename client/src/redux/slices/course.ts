@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction,createAsyncThunk } from "@reduxjs/toolkit";
 import type { ListCourses as Course } from "../../types/Courses";
 import type { RootState } from "../store/index";
+import { get } from "../../utils/api";
 
 const initialState: Course = {
   title: "",
@@ -17,9 +18,26 @@ const initialState: Course = {
   quizes: [],
 };
 
+export const getCourse = createAsyncThunk(
+  "courses/getCourse",
+  async(id:string) => {
+     const {data} = await get<{data:Course}>(`/course/${id}`)
+     return data
+  }
+)
+
 const course = createSlice({
   name: "course",
   initialState,
+  extraReducers:(builder) =>{
+    builder.addCase(getCourse.fulfilled,(state,action:PayloadAction<Course>) =>{
+
+      return {
+        ...state,
+        ...action.payload
+      }
+    })
+  },
   reducers: {
     handleFormChange: (
       state,

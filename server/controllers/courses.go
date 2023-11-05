@@ -77,7 +77,7 @@ func CreateCourse(c *gin.Context) {
 
 func GetAllCourses(c *gin.Context) {
 	var courses []models.Courses
-	result := db.DB.Find(&courses)
+	result := db.DB.Preload("Lessons").Find(&courses)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -108,8 +108,12 @@ func GetCourse(c *gin.Context) {
 func UpdateCourse(c*gin.Context){
 	var course models.Courses
 	id:= c.Param("id")
-	c.Bind(&course)
-
+	if err := c.ShouldBindJSON(&course); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "Invalid request data",
+        })
+        return
+    }
 	result:= db.DB.Model(&course).Where("id = ?", id).Updates(&course);
 
 	if result.Error != nil {
