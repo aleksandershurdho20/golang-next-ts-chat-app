@@ -52,28 +52,27 @@ type Lesson struct {
 // }
 
 func CreateCourse(c *gin.Context) {
-    var course models.Courses
-    if err := c.ShouldBindJSON(&course); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{
-            "message": "Invalid request data",
-        })
-        return
-    }
+	var course models.Courses
+	if err := c.ShouldBindJSON(&course); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request data",
+		})
+		return
+	}
 
-    result := db.DB.Create(&course)
+	result := db.DB.Create(&course)
 
-    if result.Error != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{
-            "message": "Server error!",
-        })
-        return
-    }
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Server error!",
+		})
+		return
+	}
 
-    c.JSON(http.StatusOK, gin.H{
-        "message": "Course Created",
-    })
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Course Created",
+	})
 }
-
 
 func GetAllCourses(c *gin.Context) {
 	var courses []models.Courses
@@ -105,27 +104,27 @@ func GetCourse(c *gin.Context) {
 	})
 }
 
-func UpdateCourse(c*gin.Context){
+func UpdateCourse(c *gin.Context) {
 	var course models.Courses
-	id:= c.Param("id")
+	id := c.Param("id")
 	if err := c.ShouldBindJSON(&course); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{
-            "message": "Invalid request data",
-        })
-        return
-    }
-	result:= db.DB.Model(&course).Where("id = ?", id).Updates(&course);
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request data",
+		})
+		return
+	}
+	result := db.DB.Model(&course).Where("id = ?", id).Updates(&course)
 
 	if result.Error != nil {
-		c.JSON(500,gin.H{
-			"message":"Server errror!",
+		c.JSON(500, gin.H{
+			"message": "Server errror!",
 		})
 		return
 	}
 
-	c.JSON(200,gin.H{
-		"message":"Updated succesfully!",
-		"data":result,
+	c.JSON(200, gin.H{
+		"message": "Updated succesfully!",
+		"data":    result,
 	})
 }
 
