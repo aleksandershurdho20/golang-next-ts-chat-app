@@ -3,11 +3,16 @@ import type {RootState} from '../store/index'
 import { get } from '../../utils/api'
 
 type User ={
-    id:number,
+    ID:number,
     CreatedAt:string,
     UpdatedAt:string,
     DeletedAt: string | null
+    password?:string
     email: string
+    firstname:string
+    lastname:string
+    old_password?:string
+
 }
 
 
@@ -17,6 +22,10 @@ type InitalState = {
     isLoading:boolean
 }
 
+type FormFields = {
+    name:string,
+    value:string
+}
 
 const initialState: InitalState = {
     user:undefined,
@@ -51,8 +60,15 @@ const user = createSlice({
             state.isAuthenticated = false
           });
     },
-    reducers:{}
+    reducers:{
+        handleUserChange:(state,action:PayloadAction<FormFields>) =>{
+            const {name,value}=action.payload
+            state.user[name] = value
+        }
+    }
 })
 
 export const UserSelector = (state:RootState) => state.user
+
+export const {handleUserChange} = user.actions
 export default user.reducer

@@ -16,7 +16,7 @@ function App() {
     if (authCookie) {
       dispatch(getUser());
       console.log("Auth Cookie:", authCookie);
-    }
+    } else return undefined;
   }, []);
 
   return (

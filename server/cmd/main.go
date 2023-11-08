@@ -27,6 +27,7 @@ func main() {
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login",controllers.Login)
 	r.GET("/user",controllers.GetAuthenticatedUser)
+	r.PUT("/user/:id",controllers.UpdateUser)
 	r.POST("/course/create",controllers.CreateCourse)
 	r.GET("/courses",controllers.GetAllCourses)
 	r.GET("/course/:id",controllers.GetCourse)

@@ -83,14 +83,24 @@ func Login(c *gin.Context) {
         })
         return
     }
-
+    
     // Compare the hashed password
-    if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{
-            "message": "Email or password are incorrect!",
-        })
-        return
-    }
+
+    err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
+if err != nil {
+    fmt.Println("Error comparing passwords:", err)
+    c.JSON(http.StatusBadRequest, gin.H{
+        "message": "Password is incorrect!",
+    })
+    return
+}
+
+    // if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
+    //     c.JSON(http.StatusBadRequest, gin.H{
+    //         "message": "Password are incorrect!",
+    //     })
+    //     return
+    // }
 
     // Generate a JWT token
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -179,4 +189,57 @@ func GetAuthenticatedUser(c *gin.Context) {
     c.JSON(200, gin.H{
         "result": user,
     })
+}
+
+
+
+func UpdateUser (c* gin.Context){
+    id:= c.Param("id")
+    var UserUpdateRequest struct {
+        ID    int `json:"id"`
+        Email    string `json:"email"`
+        Password string `json:"-" gorm:"column:password;"`
+        Firstname string `json:"firstname"`
+        Lastname string `json:"lastname"`
+        OldPassword string `json:"old_password"`
+    }
+    if err := c.Bind(&UserUpdateRequest); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "Invalid request data",
+        })
+        return
+    }
+
+    var user models.User
+       
+    if  len(user.Password) >0  && user.Password !=UserUpdateRequest.OldPassword{
+        c.JSON(400,gin.H{
+            "message":"Old passworwd is wrong!",
+        })
+        return
+    }
+    hash, err := bcrypt.GenerateFromPassword([]byte(UserUpdateRequest.Password), 10)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "Problem hashing the password",
+        })
+        return
+    }
+    fmt.Println(string(hash),"Hasshed password!!!!!!!!!")
+    userData := models.User{Email: UserUpdateRequest.Email, Password: string(hash),Firstname:UserUpdateRequest.Firstname,Lastname:UserUpdateRequest.Lastname}
+    result:= db.DB.Model(&user).Where("id = ?", id).Updates(&userData).Error;
+
+    if result != nil{
+        c.JSON(500, gin.H{
+            "message": "Server errro!",
+        })
+        return
+    }
+
+
+    c.JSON(200,gin.H{
+        "message":"Successfully updated user.",
+   
+    })
+
 }
