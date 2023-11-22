@@ -17,6 +17,8 @@ func main() {
 		&models.Question{},
 		&models.Answer{},
 		&models.Grades{},
+		&models.Conversation{},
+		&models.Messages{},
 
 	
 	)
