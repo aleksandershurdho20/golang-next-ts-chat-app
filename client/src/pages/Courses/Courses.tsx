@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Eye, Trash } from "react-feather";
-import { api, get } from "../../../utils/api";
-import type { ListCourses } from "../../../types/Courses";
+import { api, get } from "../../utils/api";
+import type { ListCourses } from "../../types/Courses";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 export default function Courses() {

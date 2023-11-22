@@ -12,12 +12,11 @@ export default function Profile() {
     const { name, value } = target;
     dispatch(handleUserChange({ name, value }));
   };
-  console.log(user, "s");
   const handleUpdate = () => {
     api
       .put(`/user/${user?.ID}`, user)
       .then(() => toast.success("Updated succesfully"))
-      .catch((err) => toast.error("Error!"));
+      .catch(() => toast.error("Error!"));
   };
   return (
     <div className="container">
@@ -44,14 +43,14 @@ export default function Profile() {
             value={user?.lastname}
             onChange={handleChange}
           />
-          <TextField
+          {/* <TextField
             type="text"
             wrapperClassname="mb-3"
             label="Old Password"
             id="old_password"
             placeholder="Old Password"
             name="old_password"
-            value={user?.password}
+            value={user?.old_password}
             onChange={handleChange}
           />
           <TextField
@@ -63,7 +62,7 @@ export default function Profile() {
             name="password"
             value={user?.password}
             onChange={handleChange}
-          />
+          /> */}
           <TextField
             type="text"
             wrapperClassname="mb-3"
@@ -75,7 +74,7 @@ export default function Profile() {
             onChange={handleChange}
           />
           <button className="btn btn-dark" onClick={handleUpdate}>
-            Create
+            Update
           </button>
         </div>
       </div>

@@ -3,9 +3,9 @@ package main
 import (
 	"server/controllers"
 	"server/db"
+	"server/ws"
 
 	"github.com/gin-contrib/cors"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,8 +22,15 @@ func main() {
 	// config.AllowHeaders = []string{"Origin","Auth-token","Auth","token","Content-type"}
 	config.AllowCredentials= true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	r.Use(cors.New(config))
+	
+	hub:=ws.NewHub()
 
+	go hub.Run()
+	r.Use(cors.New(config))
+	r.GET("/ws", func(c *gin.Context) {
+		ws.WsHandler(hub, c.Writer, c.Request)
+	})
+	
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login",controllers.Login)
 	r.GET("/user",controllers.GetAuthenticatedUser)
@@ -43,6 +50,9 @@ func main() {
 	r.GET("/reviews/:course",controllers.GetReviews)
 	r.POST("/quiz",controllers.CreateQuiz)
 	r.GET("/quiz/:id",controllers.GetQuizByCourseId)
+	r.POST("/grade",controllers.CreateGrade)
+	r.GET("/grades/:student/:course/:quiz",controllers.GetStudentGrade)
+	
 	r.Run()
 }
 

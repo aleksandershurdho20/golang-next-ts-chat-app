@@ -57,69 +57,59 @@ func SignUp(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	var body struct {
-		Email    string
-		Password string
-	}
+    var body struct {
+        Email    string
+        Password string 
+    }
 
-	// Bind the request data to the body struct
-	if err := c.Bind(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid request data",
-		})
-		return
-	}
+    // Bind the request data to the body struct
+    if err := c.Bind(&body); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "Invalid request data",
+        })
+        return
+    }
 
-	var user models.User
+    var user models.User
 
-	// Query the user from the database based on the provided email
-	if err := db.DB.First(&user, "email = ?", body.Email).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Email or password are incorrect!",
-		})
-		return
-	}
+    // Query the user from the database based on the provided email
+    if err := db.DB.First(&user, "email = ?", body.Email).Error; err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "Email or password are incorrect!",
+        })
+        return
+    }
 
-	// Compare the hashed password
+    // Compare the hashed password
+    if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "Email or password are incorrect!",
+        })
+        return
+    }
 
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
-	if err != nil {
-		fmt.Println("Error comparing passwords:", err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Password is incorrect!",
-		})
-		return
-	}
+    // Generate a JWT token
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+        "userid": user.Email,
+        "exp": time.Now().Add(time.Hour * 24 *30).Unix(),
+    })
 
-	// if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-	//     c.JSON(http.StatusBadRequest, gin.H{
-	//         "message": "Password are incorrect!",
-	//     })
-	//     return
-	// }
+    tokenString, err := token.SignedString([]byte(os.Getenv("TOKEN_SECRET")))
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "message": "Token couldn't be created!",
+        })
+        return
+    }
 
-	// Generate a JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userid": user.Email,
-		"exp":    time.Now().Add(time.Hour * 24 * 30).Unix(),
-	})
-
-	tokenString, err := token.SignedString([]byte(os.Getenv("TOKEN_SECRET")))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Token couldn't be created!",
-		})
-		return
-	}
-
-	localEnviroment := os.Getenv("ENVIROMENT")
-	httpOnlyCookie := !strings.Contains("localhost", localEnviroment)
-	fmt.Println(httpOnlyCookie, "httpOnlyCookie")
-	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie("Auth", tokenString, 3600*24*30, "", "", false, httpOnlyCookie)
-	c.JSON(http.StatusOK, gin.H{
-		"data": tokenString,
-	})
+    localEnviroment:= os.Getenv("ENVIROMENT")
+    httpOnlyCookie := !strings.Contains("localhost",localEnviroment)
+    fmt.Println(httpOnlyCookie,"httpOnlyCookie")
+    c.SetSameSite(http.SameSiteLaxMode)
+    c.SetCookie("Auth", tokenString, 3600*24*30, "", "", false, httpOnlyCookie)
+    c.JSON(http.StatusOK, gin.H{
+        "data": tokenString,
+    })
 }
 
 // func GetAuthenticatedUser (c * gin.Context){
@@ -182,52 +172,51 @@ func GetAuthenticatedUser(c *gin.Context) {
 	})
 }
 
+
+
 func UpdateUser(c *gin.Context) {
-	id := c.Param("id")
-	var req struct {
-		ID          int    `json:"id"`
-		Email       string `json:"email"`
-		Password    string `json:"password"`
-		Firstname   string `json:"firstname"`
-		Lastname    string `json:"lastname"`
-		OldPassword string `json:"old_password"`
+	var user models.User
+	userID := c.Param("id") 
+
+	result := db.DB.First(&user, userID)
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "User not found",
+		})
+		return
 	}
-	if err := c.Bind(&req); err != nil {
+
+	if err := c.Bind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Invalid request data",
 		})
 		return
 	}
 
-	fmt.Println("pass: ", req.Password)
+	// // If the user is updating the password, hash the new password
+	// if user.Password != "" {
+	// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	// 	fmt.Println("Not here!")
+	// 	if err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{
+	// 			"message": "Error hashing the password",
+	// 		})
+	// 		return
+	// 	}
+	// 	user.Password = string(hashedPassword)
+	// 	fmt.Println("Not here 2!")
 
-	var user models.User
-	if len(user.Password) > 0 && user.Password != req.OldPassword {
-		c.JSON(400, gin.H{
-			"message": "Old passworwd is wrong!",
-		})
-		return
-	}
-	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), 10)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Problem hashing the password",
-		})
-		return
-	}
-	fmt.Println(string(hash), "Hasshed password!!!!!!!!!")
-	userData := models.User{Email: req.Email, Password: string(hash), Firstname: req.Firstname, Lastname: req.Lastname}
-	result := db.DB.Model(&user).Where("id = ?", id).Updates(&userData).Error
+	// }
 
-	if result != nil {
-		c.JSON(500, gin.H{
-			"message": "Server errro!",
+	result = db.DB.Save(&user)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error updating user profile",
 		})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "Successfully updated user.",
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User profile updated successfully",
 	})
-
 }

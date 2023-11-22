@@ -154,7 +154,7 @@ func GetCoursesByPage(c *gin.Context) {
 	}
 	offset := (page - 1) * 10 // pageNUmber is active page, -1, where 10 is total of pages
 	var courses []models.Courses
-	result := db.DB.Limit(10).Offset(offset).Find(&courses)
+	result := db.DB.Limit(5).Offset(offset).Find(&courses)
 
 	if result.Error != nil {
 		c.JSON(500, gin.H{
@@ -164,7 +164,7 @@ func GetCoursesByPage(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"data": result,
+		"data": courses,
 	})
 
 }
