@@ -7,6 +7,8 @@ type Quiz struct {
     Title string `json:"title"`
     Questions []Question `json:"questions"`
     CourseId string `json:"course_id"`
+    IsTaken    bool     `json:"is_taken"`
+
 }
 
 type Question struct {

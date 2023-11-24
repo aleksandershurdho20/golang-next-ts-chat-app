@@ -9,6 +9,8 @@ import { getCookie } from "./utils/cookies";
 import { useEffect } from "react";
 import { getUser } from "./redux/slices/user";
 import { useAppDispatch } from "./hooks/redux";
+import { connect } from "./redux/slices/socket";
+
 import "./App.css";
 function App() {
   const dispatch = useAppDispatch();
@@ -16,7 +18,8 @@ function App() {
     const authCookie = getCookie("Auth");
     if (authCookie) {
       dispatch(getUser());
-      console.log("Auth Cookie:", authCookie);
+      // const ws = new WebSocket(`ws://localhost:8080/ws`);
+      // ws.OPEN && dispatch(connect(ws));
     } else return undefined;
   }, []);
 

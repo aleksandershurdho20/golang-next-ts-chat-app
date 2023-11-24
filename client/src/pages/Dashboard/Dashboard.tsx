@@ -60,8 +60,12 @@
 //   );
 // }
 
+import { SocketSelector } from "@/redux/slices/socket";
 import React from "react";
+import { useSelector } from "react-redux";
 
 export default function Dashboard() {
+  const s = useSelector(SocketSelector);
+  console.log(s, "ss");
   return <div>Dashboard</div>;
 }

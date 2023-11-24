@@ -4,7 +4,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type Grades struct {
+
+type SelectedAnswers struct {
+    gorm.Model
+    QuestionID uint `json:"question_id"`
+    AnswerID   uint `json:"answer_id"`
+    Points uint `json:"points"`
+    QuizResultID    uint `json:"quiz_id"` // Foreign key referencing QuizResult
+
+}
+type Grades  struct {
     gorm.Model
     CourseId   uint     `json:"course_id" gorm:"column:course_id;index;not null"`
     Course     Courses  `json:"course" gorm:"foreignkey:CourseId"`
@@ -14,9 +23,9 @@ type Grades struct {
 	ProfessorID   uint     `json:"professor_id" gorm:"column:professor_id;index;not null"`
     Professor  User     `json:"professor" gorm:"foreignKey:ProfessorID"`
     Grade      float64  `json:"grade"`
-    QuizID     uint     `json:"quiz_id" gorm:"index;not null"` // Foreign key referencing Quiz
-    Quiz       Quiz     `json:"quiz" gorm:"foreignKey:QuizID"`
-    IsTaken    bool     `json:"is_taken"`
+
+	SelectedAnswers []SelectedAnswers `json:"selected_answers" gorm:"foreignKey:QuizResultID"` // Define the foreign key for the relationship
+
 }
 
 

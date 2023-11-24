@@ -36,6 +36,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                 <MessageSquare />
                 <a>icon</a>
               </div>
+              <a className="text-muted">Logout</a>
             </div>
           </div>
 

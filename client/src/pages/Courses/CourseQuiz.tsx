@@ -1,15 +1,40 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-import { Quiz } from "../../types/Quiz";
+import { Quiz, SubmittedQuizData, QuizAnswers } from "../../types/Quiz";
 import useToogle from "../../hooks/useToogle";
 import Drawer from "react-modern-drawer";
+import { UserSelector } from "@/redux/slices/user";
+import { useAppSelector } from "@/hooks/redux";
+import {
+  addAnswerToSelectedAnswers,
+  hasSelectedMoreThanOneAnswer,
+} from "@/helpers/quiz";
 
 type Props = {
   quizes: Quiz[];
 };
+
 export default function CourseQuiz({ quizes }: Props) {
   const { isOpened, handleToogle } = useToogle();
+
+  const { user } = useAppSelector(UserSelector);
+
   const [quizData, setQuizData] = useState<Quiz | undefined>(undefined);
+
+  const [submittedQuiz, setSubmittedQuiz] = useState<SubmittedQuizData>({
+    course_id: quizData?.course_id as number,
+    professor_id: 0,
+    student_id: user?.ID as number,
+    selected_answers: [
+      // {
+      //   quiz_id: quizData?.ID as number,
+      //   answer_id: 0,
+      //   question_id: 0,
+      //   points: 0,
+      // },
+    ],
+    grade: 0,
+  });
   const [questionNumber, setQuestionNumber] = useState<number>(0);
 
   const handleNextQuestion = () => setQuestionNumber(questionNumber + 1);
@@ -18,6 +43,34 @@ export default function CourseQuiz({ quizes }: Props) {
   const handleQuizSelect = (data: Quiz) => {
     handleToogle();
     setQuizData(data);
+  };
+
+  const handleAnswerSelect = (
+    data: QuizAnswers,
+    { target }: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { checked } = target;
+    const questionID = quizData?.questions?.[questionNumber]?.ID as number;
+
+    const filteredSelectedAnswers = hasSelectedMoreThanOneAnswer(
+      submittedQuiz,
+      questionID
+    );
+
+    if (checked && !filteredSelectedAnswers) {
+      const quiz = addAnswerToSelectedAnswers(
+        submittedQuiz,
+        data,
+        quizData?.ID as number
+      );
+
+      setSubmittedQuiz(quiz);
+    } else {
+      const filteredAnsers = submittedQuiz?.selected_answers?.filter(
+        (answer) => answer.answer_id != data.ID
+      );
+      setSubmittedQuiz({ ...submittedQuiz, selected_answers: filteredAnsers });
+    }
   };
 
   const handleDrawerClose = () => {
@@ -29,8 +82,8 @@ export default function CourseQuiz({ quizes }: Props) {
   return (
     <>
       <div className="mt-5">
-        {quizes.map((quiz) => (
-          <div className="d-flex justify-content-between mb-3">
+        {quizes.map((quiz, i) => (
+          <div className="d-flex justify-content-between mb-3" key={i}>
             <h4> {quiz.title}</h4>
             <button
               className="btn btn-sm btn-light"
@@ -54,14 +107,31 @@ export default function CourseQuiz({ quizes }: Props) {
             {quizData?.questions && quizData?.questions[questionNumber]?.title}
           </h2>
           <div className="row">
+            {quizData?.questions?.length != questionNumber && (
+              <div className="mb-3 mt-3 bg-light py-3">
+                <span className="text-muted">
+                  Only one answer is allowed to be selected
+                </span>
+              </div>
+            )}
+
             {quizData?.questions?.[questionNumber]?.answers?.map(
               (answer, index) => (
                 <div className="col" key={index}>
                   <div className="form-check">
                     <input
                       className="form-check-input"
+                      value={index}
+                      checked={
+                        submittedQuiz?.selected_answers &&
+                        submittedQuiz?.selected_answers?.filter(
+                          (ans) => ans?.answer_id === answer?.ID
+                        )?.length > 0
+                          ? true
+                          : false
+                      }
+                      onChange={(e) => handleAnswerSelect(answer, e)}
                       type="checkbox"
-                      defaultValue=""
                       id={`flexCheckDefault-${index}`}
                     />
                     <label

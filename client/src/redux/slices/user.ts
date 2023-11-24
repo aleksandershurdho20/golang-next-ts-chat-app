@@ -15,7 +15,6 @@ type User ={
 
 }
 
-
 type InitalState = {
     user:User | undefined,
     isAuthenticated:boolean,
