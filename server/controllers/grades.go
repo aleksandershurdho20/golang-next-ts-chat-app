@@ -10,7 +10,7 @@ import (
 
 func CreateGrade(c *gin.Context){
 	var grades models.Grades
-
+	var quiz models.Quiz
 	if err := c.Bind(&grades); err!= nil{
 		c.JSON(400,gin.H{
 			"message":"Invalid request data!",
@@ -19,10 +19,19 @@ func CreateGrade(c *gin.Context){
 	}
 
 	err:= db.DB.Create(&grades).Error
-
+    fmt.Printf("Received request body: %+v\n", grades.SelectedAnswers)
 	if err !=nil {
 		c.JSON(500, gin.H{
 			"message": "Failed to create grade.",
+		})
+		return
+	}
+	fmt.Println("err",err)
+	updateCourseErr:= db.DB.Model(&quiz).Where("CourseId",grades.CourseID).Update("IsTaken",true).Error
+
+	if  updateCourseErr != nil {
+		c.JSON(500, gin.H{
+			"message": "Failed to update  course.",
 		})
 		return
 	}

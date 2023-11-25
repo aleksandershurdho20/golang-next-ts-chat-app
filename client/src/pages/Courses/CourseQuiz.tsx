@@ -9,6 +9,8 @@ import {
   addAnswerToSelectedAnswers,
   hasSelectedMoreThanOneAnswer,
 } from "@/helpers/quiz";
+import { api } from "@/utils/api";
+import toast from "react-hot-toast";
 
 type Props = {
   quizes: Quiz[];
@@ -56,7 +58,6 @@ export default function CourseQuiz({ quizes }: Props) {
       submittedQuiz,
       questionID
     );
-
     if (checked && !filteredSelectedAnswers) {
       const quiz = addAnswerToSelectedAnswers(
         submittedQuiz,
@@ -77,6 +78,26 @@ export default function CourseQuiz({ quizes }: Props) {
     handleToogle();
     setQuestionNumber(0);
     setQuizData(undefined);
+  };
+
+  const handleSubmitQuiz = (e: React.FormEvent) => {
+    e.preventDefault();
+    const totalPoints = submittedQuiz?.selected_answers?.reduce((acc, curr) => {
+      return acc + curr.points;
+    }, 0);
+
+    const params = {
+      ...submittedQuiz,
+      grade: totalPoints,
+      course_id: parseInt(quizData?.course_id),
+      professor_id: 15,
+    };
+    api
+      .post(`grade`, params)
+      .then(() => {
+        toast.success("Sucessfully submited!");
+      })
+      .catch((err) => err);
   };
 
   return (
@@ -147,7 +168,7 @@ export default function CourseQuiz({ quizes }: Props) {
           </div>
           <div className="quiz-actions d-flex mt-5">
             {quizData?.questions?.length == questionNumber ? (
-              <button>Finish</button>
+              <button onClick={handleSubmitQuiz}>Finish</button>
             ) : (
               <>
                 <button
