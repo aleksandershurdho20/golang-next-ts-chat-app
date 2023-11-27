@@ -1,4 +1,4 @@
-package migrations
+package main
 
 import (
 	"server/db"
@@ -15,14 +15,11 @@ func main() {
 		&models.Review{},
 		models.Quiz{},
 		&models.Question{},
-		&models.Answer{},
 		&models.Grades{},
+		&models.SelectedAnswers{},
+		&models.Answer{},
 		&models.Conversation{},
 		&models.Messages{},
-		&models.SelectedAnswers{},
-
-
-	
 	)
 	// db.DB.AutoMigrate(&models.Grades{}) // This will add any missing columns, including student_id
 
